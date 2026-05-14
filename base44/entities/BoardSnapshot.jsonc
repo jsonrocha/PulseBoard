@@ -1,0 +1,51 @@
+{
+  "name": "BoardSnapshot",
+  "type": "object",
+  "properties": {
+    "board_id": {
+      "type": "string",
+      "description": "Monday.com board ID"
+    },
+    "board_name": {
+      "type": "string",
+      "description": "Human-readable board name"
+    },
+    "items_count": {
+      "type": "number",
+      "description": "Number of items in the board"
+    },
+    "fetched_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this snapshot was fetched"
+    },
+    "raw_items_json": {
+      "type": "string",
+      "description": "Full Monday items_page JSON response"
+    }
+  },
+  "required": [
+    "board_id",
+    "board_name"
+  ],
+  "rls": {
+    "read": {
+      "filter": {}
+    },
+    "create": {
+      "filter": {
+        "created_by_role": "admin"
+      }
+    },
+    "update": {
+      "filter": {
+        "created_by_role": "admin"
+      }
+    },
+    "delete": {
+      "filter": {
+        "created_by_role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "viewer"
+      ],
+      "default": "viewer",
+      "description": "User role in PulseBoard"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "User display name"
+    }
+  },
+  "required": []
+}

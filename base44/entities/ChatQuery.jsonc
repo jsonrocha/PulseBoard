@@ -1,0 +1,42 @@
+{
+  "name": "ChatQuery",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who asked the question"
+    },
+    "question": {
+      "type": "string",
+      "description": "The question asked"
+    },
+    "answer": {
+      "type": "string",
+      "description": "The AI-generated answer"
+    }
+  },
+  "required": [
+    "user_email",
+    "question"
+  ],
+  "rls": {
+    "read": {
+      "filter_if_not_admin": {
+        "user_email": "{{current_user.email}}"
+      }
+    },
+    "create": {
+      "filter": {}
+    },
+    "update": {
+      "filter": {
+        "created_by_role": "admin"
+      }
+    },
+    "delete": {
+      "filter": {
+        "created_by_role": "admin"
+      }
+    }
+  }
+}
