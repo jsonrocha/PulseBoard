@@ -12,7 +12,7 @@ const mktColumns = [
   { key: "name", label: "Campaign" },
   { key: "channel", label: "Channel" },
   { key: "status", label: "Status" },
-  { key: "assignee", label: "Owner" },
+  { key: "owner", label: "Owner" },
   { key: "updated", label: "Updated" },
 ];
 

@@ -61,7 +61,7 @@ export function parseBugTracker(items) {
     name: item.name,
     severity: getColText(item, 'color_mm3bhdp3') || '—',
     status: getColText(item, 'color_mm3bw08b') || '—',
-    assignee: getColText(item, 'person') || 'Unassigned',
+    reportedBy: getColText(item, 'multiple_person_mm3b9q0m') || 'Unassigned',
     updated: item.updated_at ? new Date(item.updated_at).toLocaleDateString() : '—',
   }));
 
@@ -114,7 +114,7 @@ export function parseSprint(items) {
     name: item.name,
     status: getColText(item, 'color_mm3byazv') || '—',
     priority: getColText(item, 'color_mm3b71dw') || '—',
-    assignee: getColText(item, 'person') || 'Unassigned',
+    assignee: getColText(item, 'multiple_person_mm3b5y5p') || 'Unassigned',
     updated: item.updated_at ? new Date(item.updated_at).toLocaleDateString() : '—',
   }));
 
@@ -173,7 +173,7 @@ export function parseMarketing(items) {
     name: item.name,
     channel: getColText(item, 'dropdown_mm3bt5m9') || '—',
     status: getColText(item, 'color_mm3bg2k7') || '—',
-    assignee: getColText(item, 'person') || 'Unassigned',
+    owner: getColText(item, 'multiple_person_mm3bkdw7') || 'Unassigned',
     updated: item.updated_at ? new Date(item.updated_at).toLocaleDateString() : '—',
   }));
 

@@ -12,7 +12,7 @@ const bugColumns = [
   { key: "name", label: "Bug" },
   { key: "severity", label: "Severity" },
   { key: "status", label: "Status" },
-  { key: "assignee", label: "Assignee" },
+  { key: "reportedBy", label: "Reported By" },
   { key: "updated", label: "Updated" },
 ];
 
