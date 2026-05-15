@@ -20,22 +20,27 @@
     "question"
   ],
   "rls": {
+    "create": {},
     "read": {
-      "filter_if_not_admin": {
-        "user_email": "{{current_user.email}}"
-      }
-    },
-    "create": {
-      "filter": {}
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "update": {
-      "filter": {
-        "created_by_role": "admin"
+      "user_condition": {
+        "role": "admin"
       }
     },
     "delete": {
-      "filter": {
-        "created_by_role": "admin"
+      "user_condition": {
+        "role": "admin"
       }
     }
   }
