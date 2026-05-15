@@ -41,28 +41,30 @@ export default function MiniTable({ columns, rows }) {
 
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-border">
-            {columns.map(col => (
-              <th key={col.key} className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                {col.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i} className="border-b border-border/50 last:border-0 hover:bg-secondary/30 transition-colors">
+      <div className="overflow-y-auto max-h-[480px]">
+        <table className="w-full">
+          <thead className="sticky top-0 bg-card z-10">
+            <tr className="border-b border-border">
               {columns.map(col => (
-                <td key={col.key} className="px-3 py-2">
-                  {renderCell(col, row)}
-                </td>
+                <th key={col.key} className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  {col.label}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={i} className="border-b border-border/50 last:border-0 hover:bg-secondary/30 transition-colors">
+                {columns.map(col => (
+                  <td key={col.key} className="px-3 py-2">
+                    {renderCell(col, row)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

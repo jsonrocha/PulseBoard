@@ -56,7 +56,7 @@ export function parseBugTracker(items) {
     .filter(v => byStatus[v] > 0)
     .map(v => ({ name: v, count: byStatus[v], fill: statusColors[v] }));
 
-  const tableRows = items.slice(0, 8).map(item => ({
+  const tableRows = items.map(item => ({
     id: item.id,
     name: item.name,
     severity: getColText(item, 'color_mm3bhdp3') || '—',
@@ -109,7 +109,7 @@ export function parseSprint(items) {
     .filter(v => byPriority[v] > 0)
     .map(v => ({ name: v, count: byPriority[v], fill: priorityColors[v] }));
 
-  const tableRows = items.slice(0, 8).map(item => ({
+  const tableRows = items.map(item => ({
     id: item.id,
     name: item.name,
     status: getColText(item, 'color_mm3byazv') || '—',
@@ -168,7 +168,7 @@ export function parseMarketing(items) {
     .slice(0, 6)
     .map(([name, count], i) => ({ name, count, fill: channelPalette[i] }));
 
-  const tableRows = items.slice(0, 8).map(item => ({
+  const tableRows = items.map(item => ({
     id: item.id,
     name: item.name,
     channel: getColText(item, 'dropdown_mm3bt5m9') || '—',
