@@ -1,19 +1,19 @@
-import { Megaphone, DollarSign, Users } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from "recharts";
+import { Megaphone, Radio, Calendar } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import KpiCard from "./KpiCard";
 import BoardSection from "./BoardSection";
 import MiniTable from "./MiniTable";
-import { marketingKpis, campaignsByChannel, leadsOverTime, campaignItems } from "@/lib/mockData";
+import { parseMarketing } from "@/lib/parseBoardData";
 
-const icons = [Megaphone, DollarSign, Users];
+const icons = [Megaphone, Radio, Calendar];
 
 const mktColumns = [
   { key: "id", label: "ID" },
   { key: "name", label: "Campaign" },
   { key: "channel", label: "Channel" },
   { key: "status", label: "Status" },
-  { key: "spend", label: "Spend" },
-  { key: "leads", label: "Leads" },
+  { key: "assignee", label: "Owner" },
+  { key: "updated", label: "Updated" },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -30,44 +30,60 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-export default function MarketingSection() {
+const EmptyState = () => (
+  <div className="bg-card border border-border rounded-lg p-8 text-center text-[12px] text-muted-foreground col-span-2">
+    No data yet — click <span className="text-foreground font-medium">Refresh</span> in the Admin panel to sync.
+  </div>
+);
+
+export default function MarketingSection({ snapshot }) {
+  const items = (() => {
+    try { return snapshot ? JSON.parse(snapshot.raw_items_json) : null; } catch { return null; }
+  })();
+
+  const parsed = items ? parseMarketing(items) : null;
+
   return (
-    <BoardSection title="Marketing Campaigns" subtitle="board_id: 4821041">
-      <div className="grid grid-cols-3 gap-3">
-        {marketingKpis.map((kpi, i) => (
-          <KpiCard key={kpi.label} {...kpi} icon={icons[i]} />
-        ))}
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Spend & Leads by Channel</div>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={campaignsByChannel} barGap={2}>
-              <XAxis dataKey="name" tick={{ fontSize: 9, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
-              <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={36} />
-              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar yAxisId="left" dataKey="spend" fill="hsl(217, 91%, 60%)" radius={[2, 2, 0, 0]} name="Spend ($)" />
-              <Bar yAxisId="right" dataKey="leads" fill="hsl(160, 60%, 45%)" radius={[2, 2, 0, 0]} name="Leads" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Leads & Spend Trend (6 weeks)</div>
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={leadsOverTime}>
-              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
-              <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
-              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={36} />
-              <Tooltip content={<CustomTooltip />} />
-              <Line yAxisId="left" type="monotone" dataKey="leads" stroke="hsl(160, 60%, 45%)" dot={false} name="Leads" strokeWidth={2} />
-              <Line yAxisId="right" type="monotone" dataKey="spend" stroke="hsl(217, 91%, 60%)" dot={false} name="Spend ($)" strokeWidth={2} />
-              <Legend iconType="circle" iconSize={6} formatter={(v) => <span className="text-[11px] text-muted-foreground">{v}</span>} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <MiniTable columns={mktColumns} rows={campaignItems} />
+    <BoardSection title="Marketing Campaigns" subtitle={`board_id: 18413113347${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
+      {parsed ? (
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            {parsed.kpis.map((kpi, i) => (
+              <KpiCard key={kpi.label} {...kpi} icon={icons[i]} />
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-card border border-border rounded-lg p-4">
+              <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Campaigns by Status</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={parsed.statusChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
+                    {parsed.statusChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend iconType="circle" iconSize={6} formatter={(v) => <span className="text-[11px] text-muted-foreground">{v}</span>} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-card border border-border rounded-lg p-4">
+              <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Campaigns by Channel</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={parsed.channelChart} barGap={2}>
+                  <XAxis dataKey="name" tick={{ fontSize: 9, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="count" radius={[2, 2, 0, 0]} name="Count">
+                    {parsed.channelChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <MiniTable columns={mktColumns} rows={parsed.tableRows} />
+        </>
+      ) : (
+        <div className="grid grid-cols-2 gap-3"><EmptyState /></div>
+      )}
     </BoardSection>
   );
 }

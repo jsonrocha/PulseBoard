@@ -1,19 +1,19 @@
-import { Zap, BarChart3, ArrowLeftRight } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend } from "recharts";
+import { Zap, BarChart3, AlertOctagon } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import KpiCard from "./KpiCard";
 import BoardSection from "./BoardSection";
 import MiniTable from "./MiniTable";
-import { sprintKpis, sprintByStatus, sprintBurndown, sprintItems } from "@/lib/mockData";
+import { parseSprint } from "@/lib/parseBoardData";
 
-const icons = [Zap, BarChart3, ArrowLeftRight];
+const icons = [Zap, BarChart3, AlertOctagon];
 
 const sprintColumns = [
   { key: "id", label: "ID" },
   { key: "name", label: "Task" },
-  { key: "points", label: "Pts" },
   { key: "status", label: "Status" },
+  { key: "priority", label: "Priority" },
   { key: "assignee", label: "Assignee" },
-  { key: "type", label: "Type" },
+  { key: "updated", label: "Updated" },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -30,43 +30,60 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-export default function SprintSection() {
+const EmptyState = () => (
+  <div className="bg-card border border-border rounded-lg p-8 text-center text-[12px] text-muted-foreground col-span-2">
+    No data yet — click <span className="text-foreground font-medium">Refresh</span> in the Admin panel to sync.
+  </div>
+);
+
+export default function SprintSection({ snapshot }) {
+  const items = (() => {
+    try { return snapshot ? JSON.parse(snapshot.raw_items_json) : null; } catch { return null; }
+  })();
+
+  const parsed = items ? parseSprint(items) : null;
+
   return (
-    <BoardSection title="Engineering Sprint 24" subtitle="board_id: 4821040">
-      <div className="grid grid-cols-3 gap-3">
-        {sprintKpis.map((kpi, i) => (
-          <KpiCard key={kpi.label} {...kpi} icon={icons[i]} />
-        ))}
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Items by Status</div>
-          <ResponsiveContainer width="100%" height={180}>
-            <PieChart>
-              <Pie data={sprintByStatus} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
-                {sprintByStatus.map((entry, i) => (
-                  <Cell key={i} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend iconType="circle" iconSize={6} formatter={(v) => <span className="text-[11px] text-muted-foreground">{v}</span>} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Sprint Burndown</div>
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={sprintBurndown}>
-              <XAxis dataKey="day" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
-              <Tooltip content={<CustomTooltip />} />
-              <Line type="monotone" dataKey="ideal" stroke="hsl(215, 14%, 35%)" strokeDasharray="4 4" dot={false} name="Ideal" strokeWidth={1.5} />
-              <Line type="monotone" dataKey="actual" stroke="hsl(217, 91%, 60%)" dot={false} name="Actual" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <MiniTable columns={sprintColumns} rows={sprintItems} />
+    <BoardSection title="Engineering Sprint" subtitle={`board_id: 18413113346${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
+      {parsed ? (
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            {parsed.kpis.map((kpi, i) => (
+              <KpiCard key={kpi.label} {...kpi} icon={icons[i]} />
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-card border border-border rounded-lg p-4">
+              <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Items by Status</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={parsed.statusChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
+                    {parsed.statusChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend iconType="circle" iconSize={6} formatter={(v) => <span className="text-[11px] text-muted-foreground">{v}</span>} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-card border border-border rounded-lg p-4">
+              <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Items by Priority</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={parsed.priorityChart} barGap={2}>
+                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="count" radius={[2, 2, 0, 0]} name="Count">
+                    {parsed.priorityChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <MiniTable columns={sprintColumns} rows={parsed.tableRows} />
+        </>
+      ) : (
+        <div className="grid grid-cols-2 gap-3"><EmptyState /></div>
+      )}
     </BoardSection>
   );
 }

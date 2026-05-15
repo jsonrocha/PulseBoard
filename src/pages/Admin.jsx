@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Shield, RefreshCw, Database, MessageSquare, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { format } from "date-fns";
 export default function Admin() {
   const [user, setUser] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     base44.auth.me().then(setUser);
@@ -41,9 +42,21 @@ export default function Admin() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setRefreshing(false);
-    toast.info("Monday data refresh is a no-op in scaffold mode.");
+    try {
+      const res = await base44.functions.invoke('syncMondayBoards', {});
+      const { synced = [], errors = [] } = res.data;
+      await queryClient.invalidateQueries({ queryKey: ['admin-snapshots'] });
+      await queryClient.invalidateQueries({ queryKey: ['board-snapshots'] });
+      if (errors.length > 0) {
+        toast.warning(`Synced ${synced.length} board(s). ${errors.length} failed: ${errors.map(e => e.board_id).join(', ')}`);
+      } else {
+        toast.success(`Synced ${synced.length} board(s) successfully.`);
+      }
+    } catch (err) {
+      toast.error(`Sync failed: ${err.message}`);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   return (

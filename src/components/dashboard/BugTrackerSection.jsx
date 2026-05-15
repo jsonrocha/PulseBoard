@@ -1,11 +1,11 @@
-import { Bug, AlertTriangle, Clock } from "lucide-react";
+import { Bug, AlertTriangle, CheckCircle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import KpiCard from "./KpiCard";
 import BoardSection from "./BoardSection";
 import MiniTable from "./MiniTable";
-import { bugTrackerKpis, bugsBySeverity, bugsOverTime, bugItems } from "@/lib/mockData";
+import { parseBugTracker } from "@/lib/parseBoardData";
 
-const icons = [Bug, AlertTriangle, Clock];
+const icons = [Bug, AlertTriangle, CheckCircle];
 
 const bugColumns = [
   { key: "id", label: "ID" },
@@ -13,7 +13,7 @@ const bugColumns = [
   { key: "severity", label: "Severity" },
   { key: "status", label: "Status" },
   { key: "assignee", label: "Assignee" },
-  { key: "age", label: "Age" },
+  { key: "updated", label: "Updated" },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -30,43 +30,60 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-export default function BugTrackerSection() {
+const EmptyState = () => (
+  <div className="bg-card border border-border rounded-lg p-8 text-center text-[12px] text-muted-foreground col-span-2">
+    No data yet — click <span className="text-foreground font-medium">Refresh</span> in the Admin panel to sync.
+  </div>
+);
+
+export default function BugTrackerSection({ snapshot }) {
+  const items = (() => {
+    try { return snapshot ? JSON.parse(snapshot.raw_items_json) : null; } catch { return null; }
+  })();
+
+  const parsed = items ? parseBugTracker(items) : null;
+
   return (
-    <BoardSection title="Bug Tracker" subtitle="board_id: 4821039">
-      <div className="grid grid-cols-3 gap-3">
-        {bugTrackerKpis.map((kpi, i) => (
-          <KpiCard key={kpi.label} {...kpi} icon={icons[i]} />
-        ))}
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Bugs by Severity</div>
-          <ResponsiveContainer width="100%" height={180}>
-            <PieChart>
-              <Pie data={bugsBySeverity} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
-                {bugsBySeverity.map((entry, i) => (
-                  <Cell key={i} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend iconType="circle" iconSize={6} formatter={(v) => <span className="text-[11px] text-muted-foreground">{v}</span>} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Opened vs Resolved (6 weeks)</div>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={bugsOverTime} barGap={2}>
-              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="opened" fill="hsl(0, 72%, 55%)" radius={[2, 2, 0, 0]} name="Opened" />
-              <Bar dataKey="resolved" fill="hsl(160, 60%, 45%)" radius={[2, 2, 0, 0]} name="Resolved" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <MiniTable columns={bugColumns} rows={bugItems} />
+    <BoardSection title="Bug Tracker" subtitle={`board_id: 18413113348${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
+      {parsed ? (
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            {parsed.kpis.map((kpi, i) => (
+              <KpiCard key={kpi.label} {...kpi} icon={icons[i]} />
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-card border border-border rounded-lg p-4">
+              <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Bugs by Severity</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={parsed.severityChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
+                    {parsed.severityChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend iconType="circle" iconSize={6} formatter={(v) => <span className="text-[11px] text-muted-foreground">{v}</span>} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-card border border-border rounded-lg p-4">
+              <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Bugs by Status</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={parsed.statusChart} barGap={2}>
+                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="count" radius={[2, 2, 0, 0]} name="Count">
+                    {parsed.statusChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <MiniTable columns={bugColumns} rows={parsed.tableRows} />
+        </>
+      ) : (
+        <div className="grid grid-cols-2 gap-3"><EmptyState /></div>
+      )}
     </BoardSection>
   );
 }
