@@ -29,22 +29,24 @@
     "board_name"
   ],
   "rls": {
-    "read": {
-      "filter": {}
-    },
     "create": {
-      "filter": {
-        "created_by_role": "admin"
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
       }
     },
     "update": {
-      "filter": {
-        "created_by_role": "admin"
+      "user_condition": {
+        "role": "admin"
       }
     },
     "delete": {
-      "filter": {
-        "created_by_role": "admin"
+      "user_condition": {
+        "role": "admin"
       }
     }
   }
