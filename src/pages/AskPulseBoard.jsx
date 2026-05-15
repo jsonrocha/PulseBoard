@@ -36,17 +36,13 @@ export default function AskPulseBoard() {
     setMessages(prev => [...prev, { role: "assistant", content: answer }]);
     setLoading(false);
 
-    // Save to ChatQuery (fire-and-forget)
-    try {
-      const user = await base44.auth.me();
-      await base44.entities.ChatQuery.create({
-        user_email: user.email,
-        question: q,
-        answer: answer,
-      });
-    } catch (e) {
-      // silent — mock mode
-    }
+    // Save to ChatQuery
+    const user = await base44.auth.me();
+    await base44.entities.ChatQuery.create({
+      user_email: user.email,
+      question: q,
+      answer: answer,
+    });
   };
 
   const handleKeyDown = (e) => {
