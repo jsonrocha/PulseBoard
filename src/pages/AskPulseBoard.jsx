@@ -3,7 +3,6 @@ import { Send, Activity, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { base44 } from "@/api/base44Client";
-import { mockAiResponses } from "@/lib/mockData";
 import ReactMarkdown from "react-markdown";
 
 export default function AskPulseBoard() {
@@ -11,13 +10,35 @@ export default function AskPulseBoard() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
-  const mockIndex = useRef(0);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const buildContext = (snapshots) => {
+    const BOARD_IDS = ['18413113348', '18413113346', '18413113347'];
+    return BOARD_IDS.map(boardId => {
+      const snap = snapshots.find(s => s.board_id === boardId);
+      if (!snap) return { board_id: boardId, board_name: snap?.board_name || boardId, items: [] };
+      let items = [];
+      try { items = JSON.parse(snap.raw_items_json); } catch { items = []; }
+      return {
+        board_name: snap.board_name,
+        items_count: snap.items_count,
+        items: items.map(item => {
+          const cols = {};
+          (item.column_values || []).forEach(cv => {
+            if (cv.text && cv.text.trim() && cv.column?.title) {
+              cols[cv.column.title] = cv.text.trim();
+            }
+          });
+          return { name: item.name, updated_at: item.updated_at, ...cols };
+        }),
+      };
+    });
+  };
 
   const handleSend = async () => {
     const q = input.trim();
@@ -27,21 +48,36 @@ export default function AskPulseBoard() {
     setMessages(prev => [...prev, { role: "user", content: q }]);
     setLoading(true);
 
-    // Mock delay
-    await new Promise(r => setTimeout(r, 1200));
+    const user = await base44.auth.me();
+    let answer = "";
 
-    const answer = mockAiResponses[mockIndex.current % mockAiResponses.length];
-    mockIndex.current++;
+    try {
+      const snapshots = await base44.entities.BoardSnapshot.list('-fetched_at', 10);
+      const context = buildContext(snapshots);
+
+      const systemPrompt = `You are PulseBoard's data assistant. You answer questions about three monday.com boards (Bug Tracker, Engineering Sprint, Marketing Campaigns) using ONLY the data provided in the CONTEXT block. Do not invent items, statuses, owners, or numbers. If the question cannot be answered from CONTEXT, say so plainly and suggest which board might have the relevant data.
+
+When citing items, use their actual names from CONTEXT. When citing counts, count them yourself from CONTEXT — never estimate or round. Prefer concrete numbers ("3 items are stuck") over vague phrases ("a few items are stuck").
+
+Keep responses under 4 sentences unless the user explicitly asks for detail.`;
+
+      const userMessage = `Question: ${q}\n\nCONTEXT:\n${JSON.stringify(context, null, 2)}`;
+
+      answer = await base44.integrations.Core.InvokeLLM({
+        prompt: `${systemPrompt}\n\n---\n\n${userMessage}`,
+      });
+
+    } catch (err) {
+      answer = "Sorry, I couldn't generate an answer right now. Please try again.";
+    }
 
     setMessages(prev => [...prev, { role: "assistant", content: answer }]);
     setLoading(false);
 
-    // Save to ChatQuery
-    const user = await base44.auth.me();
     await base44.entities.ChatQuery.create({
       user_email: user.email,
       question: q,
-      answer: answer,
+      answer,
     });
   };
 
