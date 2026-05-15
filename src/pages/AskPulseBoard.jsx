@@ -21,20 +21,19 @@ export default function AskPulseBoard() {
     const BOARD_IDS = ['18413113348', '18413113346', '18413113347'];
     return BOARD_IDS.map(boardId => {
       const snap = snapshots.find(s => s.board_id === boardId);
-      if (!snap) return { board_id: boardId, board_name: snap?.board_name || boardId, items: [] };
-      let items = [];
-      try { items = JSON.parse(snap.raw_items_json); } catch { items = []; }
+      if (!snap) return { board_name: boardId, items: [] };
+      let rawItems = [];
+      try { rawItems = JSON.parse(snap.raw_items_json); } catch { rawItems = []; }
       return {
         board_name: snap.board_name,
-        items_count: snap.items_count,
-        items: items.map(item => {
-          const cols = {};
+        items: rawItems.map(item => {
+          const flat = { id: item.id, name: item.name, updated_at: item.updated_at };
           (item.column_values || []).forEach(cv => {
             if (cv.text && cv.text.trim() && cv.column?.title) {
-              cols[cv.column.title] = cv.text.trim();
+              flat[cv.column.title] = cv.text.trim();
             }
           });
-          return { name: item.name, updated_at: item.updated_at, ...cols };
+          return flat;
         }),
       };
     });
@@ -59,12 +58,15 @@ export default function AskPulseBoard() {
 
 When citing items, use their actual names from CONTEXT. When citing counts, count them yourself from CONTEXT — never estimate or round. Prefer concrete numbers ("3 items are stuck") over vague phrases ("a few items are stuck").
 
+When asked for counts or aggregates, count items one at a time through the data, then state the final count. Do not estimate. Do not round. If you are uncertain, say "I count X items matching that criterion based on the data provided" and explain what you matched.
+
 Keep responses under 4 sentences unless the user explicitly asks for detail.`;
 
       const userMessage = `Question: ${q}\n\nCONTEXT:\n${JSON.stringify(context, null, 2)}`;
 
       answer = await base44.integrations.Core.InvokeLLM({
         prompt: `${systemPrompt}\n\n---\n\n${userMessage}`,
+        model: 'gpt_5_4',
       });
 
     } catch (err) {
