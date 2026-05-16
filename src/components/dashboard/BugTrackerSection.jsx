@@ -45,6 +45,17 @@ export default function BugTrackerSection({ snapshot }) {
 
   return (
     <BoardSection title="Bug Tracker" subtitle={`board_id: 18413113348${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
+      <style>{`
+  .recharts-bar-hover {
+    transition: transform 150ms ease, filter 150ms ease;
+    transform-origin: center bottom;
+    transform-box: fill-box;
+  }
+  .recharts-bar-hover:hover {
+    transform: scale(1.05, 1.08);
+    filter: brightness(1.15);
+  }
+      `}</style>
       {parsed ? (
         <>
           <div className="grid grid-cols-3 gap-3">
@@ -72,8 +83,19 @@ export default function BugTrackerSection({ snapshot }) {
                   <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
                   <Tooltip content={<CustomTooltip />} cursor={false} />
-                  <Bar dataKey="count" radius={[2, 2, 0, 0]} name="Count">
-                    {parsed.statusChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  <Bar
+                    dataKey="count"
+                    radius={[2, 2, 0, 0]}
+                    name="Count"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {parsed.statusChart.map((entry, i) => (
+                      <Cell
+                        key={i}
+                        fill={entry.fill}
+                        className="recharts-bar-hover"
+                      />
+                    ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
