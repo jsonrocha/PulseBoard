@@ -60,7 +60,7 @@ export default function MarketingSection({ snapshot }) {
                   <Pie data={parsed.statusChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
                     {parsed.statusChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   </Pie>
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={false} />
                   <Legend iconType="circle" iconSize={6} formatter={(v) => <span className="text-[11px] text-muted-foreground">{v}</span>} />
                 </PieChart>
               </ResponsiveContainer>
@@ -71,7 +71,7 @@ export default function MarketingSection({ snapshot }) {
                 <BarChart data={parsed.channelChart} barGap={2}>
                   <XAxis dataKey="name" tick={{ fontSize: 9, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={false} />
                   <Bar dataKey="count" radius={[2, 2, 0, 0]} name="Count">
                     {parsed.channelChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   </Bar>
