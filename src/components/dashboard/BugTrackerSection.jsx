@@ -60,7 +60,7 @@ export default function BugTrackerSection({ snapshot }) {
                   <Pie data={parsed.severityChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
                     {parsed.severityChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   </Pie>
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
                   <Legend iconType="circle" iconSize={6} formatter={(v) => <span className="text-[11px] text-muted-foreground">{v}</span>} />
                 </PieChart>
               </ResponsiveContainer>
@@ -71,7 +71,7 @@ export default function BugTrackerSection({ snapshot }) {
                 <BarChart data={parsed.statusChart} barGap={2}>
                   <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: "hsl(215, 14%, 50%)" }} axisLine={false} tickLine={false} width={24} />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
                   <Bar dataKey="count" radius={[2, 2, 0, 0]} name="Count">
                     {parsed.statusChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   </Bar>
