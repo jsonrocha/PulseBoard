@@ -1,16 +1,31 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Shield, RefreshCw, Database, MessageSquare, Loader2 } from "lucide-react";
+import { Shield, RefreshCw, Database, MessageSquare, Loader2, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { ROCHA_FIXTURES } from "@/lib/rochaFixtures";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const queryClient = useQueryClient();
+
+  const isTestEnv = import.meta.env.VITE_BASE44_DATA_ENV === 'dev';
 
   useEffect(() => {
     base44.auth.me().then(setUser);
@@ -39,6 +54,36 @@ export default function Admin() {
       </div>
     );
   }
+
+  const handleSeedClick = () => {
+    if (!isTestEnv) {
+      toast.error("Seed Test Data is only available in test mode. Toggle Test Data in App Settings to use this.");
+      return;
+    }
+    setConfirmOpen(true);
+  };
+
+  const handleSeedConfirm = async () => {
+    setSeeding(true);
+    try {
+      // Delete all existing snapshots
+      const existing = await base44.entities.BoardSnapshot.list("-created_date", 200);
+      await Promise.all(existing.map(s => base44.entities.BoardSnapshot.delete(s.id)));
+
+      // Insert Rocha LLC fixtures
+      await base44.entities.BoardSnapshot.bulkCreate(
+        ROCHA_FIXTURES.map(f => ({ ...f, fetched_at: new Date().toISOString() }))
+      );
+
+      await queryClient.invalidateQueries({ queryKey: ['admin-snapshots'] });
+      await queryClient.invalidateQueries({ queryKey: ['board-snapshots'] });
+      toast.success("Rocha LLC test data seeded successfully.");
+    } catch (err) {
+      toast.error(`Seed failed: ${err.message}`);
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -95,18 +140,47 @@ export default function Admin() {
             <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Monday Sync</div>
             <div className="text-[12px] text-muted-foreground mt-1">Trigger a full board refresh</div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="gap-1.5 text-[12px]"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
-            {refreshing ? "Syncing…" : "Refresh"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSeedClick}
+              disabled={seeding}
+              className="gap-1.5 text-[12px] text-muted-foreground border border-border hover:text-foreground"
+            >
+              <FlaskConical className={`h-3.5 w-3.5 ${seeding ? "animate-pulse" : ""}`} />
+              {seeding ? "Seeding…" : "Seed Test Data"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="gap-1.5 text-[12px]"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+              {refreshing ? "Syncing…" : "Refresh"}
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* Seed confirmation dialog */}
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Seed Test Data?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will replace any existing test data with the fictional <strong>Rocha LLC</strong> dataset.
+              All current BoardSnapshot records will be deleted and 3 new fixtures will be inserted. Proceed?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSeedConfirm}>Seed Test Data</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Chat queries table */}
       <div className="bg-card border border-border rounded-lg overflow-hidden">
