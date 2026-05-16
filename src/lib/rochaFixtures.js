@@ -111,21 +111,21 @@ const marketingItems = [
 
 export const ROCHA_FIXTURES = [
   {
-    board_id: "rocha-bugs-001",
+    board_id: "18413113348",
     board_name: "Bug Tracker",
     items_count: bugItems.length,
     fetched_at: now,
     raw_items_json: JSON.stringify(bugItems),
   },
   {
-    board_id: "rocha-sprint-001",
+    board_id: "18413113346",
     board_name: "Engineering Sprint",
     items_count: sprintItems.length,
     fetched_at: now,
     raw_items_json: JSON.stringify(sprintItems),
   },
   {
-    board_id: "rocha-marketing-001",
+    board_id: "18413113347",
     board_name: "Marketing Campaigns",
     items_count: marketingItems.length,
     fetched_at: now,
