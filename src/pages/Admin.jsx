@@ -25,7 +25,6 @@ export default function Admin() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const isTestEnv = import.meta.env.VITE_BASE44_DATA_ENV === 'dev';
 
   useEffect(() => {
     base44.auth.me().then(setUser);
@@ -56,10 +55,6 @@ export default function Admin() {
   }
 
   const handleSeedClick = () => {
-    if (!isTestEnv) {
-      toast.error("Seed Test Data is only available in test mode. Toggle Test Data in App Settings to use this.");
-      return;
-    }
     setConfirmOpen(true);
   };
 
@@ -169,10 +164,9 @@ export default function Admin() {
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Seed Test Data?</AlertDialogTitle>
+            <AlertDialogTitle>Seed Rocha LLC Test Data?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will replace any existing test data with the fictional <strong>Rocha LLC</strong> dataset.
-              All current BoardSnapshot records will be deleted and 3 new fixtures will be inserted. Proceed?
+              This will replace all BoardSnapshot records in the <strong>current environment</strong> with the fictional Rocha LLC dataset (5 bugs, 4 sprint items, 3 campaigns). If you are in production mode, you will lose your real monday data — click Cancel and switch to test mode first. Proceed?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
