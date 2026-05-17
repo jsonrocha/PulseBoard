@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, MessageSquare, Shield, Activity } from "lucide-react";
+import { LayoutDashboard, MessageSquare, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+import PulseLogo from "@/components/PulseLogo";
 
 const navItems = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -14,9 +15,7 @@ export default function Sidebar() {
   return (
     <aside className="w-56 h-screen sticky top-0 flex flex-col bg-background border-r border-border">
       <div className="px-4 h-14 flex items-center gap-2.5 border-b border-border">
-        <div className="h-7 w-7 rounded-md bg-primary flex items-center justify-center">
-          <Activity className="h-4 w-4 text-primary-foreground" />
-        </div>
+        <PulseLogo size={28} />
         <span className="font-semibold text-sm tracking-tight text-foreground">PulseBoard</span>
       </div>
 
