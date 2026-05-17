@@ -6,47 +6,62 @@ const BOARDS = [
   { id: '18413113347', name: 'Marketing Campaigns' },
 ];
 
-const GQL_QUERY = (boardId) => `{ boards(ids: [${boardId}]) { id name items_count items_page(limit: 100) { items { id name updated_at column_values { id text column { title type } } } } } }`;
+const GQL_QUERY = (boardId) =>
+  `{ boards(ids: [${boardId}]) { id name items_count items_page(limit: 100) { items { id name updated_at column_values { id text column { title type } } } } } }`;
+
+async function fetchBoard(boardId) {
+  const res = await fetch('https://api.monday.com/v2', {
+    method: 'POST',
+    headers: {
+      'Authorization': Deno.env.get('MONDAY_API_TOKEN'),
+      'API-Version': '2024-10',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query: GQL_QUERY(boardId) }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`monday.com API returned ${res.status}`);
+  }
+
+  const json = await res.json();
+  if (json.errors?.length) {
+    throw new Error(json.errors.map(e => e.message).join('; '));
+  }
+
+  return json.data;
+}
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
-  const user = await base44.auth.me();
 
-  if (!user) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  if (user.role !== 'admin') {
+  // For user-initiated calls, enforce admin-only access.
+  // Scheduled automations run without a user session — allow them through.
+  const user = await base44.auth.me().catch(() => null);
+  if (user !== null && user.role !== 'admin') {
     return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
   }
 
-  const results = [];
+  const synced = [];
   const errors = [];
 
   for (const board of BOARDS) {
-    // Call queryMonday for this board
-    let qRes;
+    let data;
     try {
-      qRes = await base44.functions.invoke('queryMonday', {
-        query: GQL_QUERY(board.id),
-        variables: {},
-      });
+      data = await fetchBoard(board.id);
     } catch (err) {
-      errors.push({ board_id: board.id, error: `Network error: ${err.message}` });
+      errors.push({ board_id: board.id, error: err.message });
       continue;
     }
 
-    const payload = qRes.data;
-    if (!payload?.success || !payload?.data?.boards?.[0]) {
-      errors.push({ board_id: board.id, error: 'No board data returned', details: payload });
+    const boardData = data?.boards?.[0];
+    if (!boardData) {
+      errors.push({ board_id: board.id, error: 'No board data returned' });
       continue;
     }
 
-    const boardData = payload.data.boards[0];
     const items = boardData.items_page?.items || [];
     const fetchedAt = new Date().toISOString();
-
-    // Find existing snapshot for this board_id
-    const existing = await base44.asServiceRole.entities.BoardSnapshot.filter({ board_id: board.id });
 
     const snapshotData = {
       board_id: board.id,
@@ -56,14 +71,15 @@ Deno.serve(async (req) => {
       raw_items_json: JSON.stringify(items),
     };
 
-    if (existing && existing.length > 0) {
+    const existing = await base44.asServiceRole.entities.BoardSnapshot.filter({ board_id: board.id });
+    if (existing?.length > 0) {
       await base44.asServiceRole.entities.BoardSnapshot.update(existing[0].id, snapshotData);
     } else {
       await base44.asServiceRole.entities.BoardSnapshot.create(snapshotData);
     }
 
-    results.push({ board_id: board.id, board_name: snapshotData.board_name, items_count: snapshotData.items_count });
+    synced.push({ board_id: board.id, board_name: snapshotData.board_name, items_count: snapshotData.items_count });
   }
 
-  return Response.json({ success: true, synced: results, errors });
+  return Response.json({ success: true, synced, errors });
 });
