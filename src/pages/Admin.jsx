@@ -140,15 +140,25 @@ export default function Admin() {
                 const d = new Date(s.fetched_at);
                 return (!latest || d > latest) ? d : latest;
               }, null);
-              return lastSynced ? (
-                <div className="text-[11px] text-muted-foreground font-mono mt-1">
-                  Last synced: {lastSynced.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}, {lastSynced.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).replace(',', '')}
-                </div>
-              ) : null;
+              // Compute local auto-sync time (03:00 UTC → local)
+              const autoSyncUtc = new Date();
+              autoSyncUtc.setUTCHours(3, 0, 0, 0);
+              const autoSyncLocal = autoSyncUtc.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' });
+              return (
+                <>
+                  {lastSynced && (
+                    <div className="text-[11px] text-muted-foreground font-mono mt-1">
+                      Last synced: {lastSynced.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}, {lastSynced.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' })}
+                    </div>
+                  )}
+                  <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
+                    Auto-sync: daily @ {autoSyncLocal}
+                  </div>
+                </>
+              );
             })()}
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end">
-            <span className="text-[11px] text-muted-foreground font-mono">Auto-sync: daily @ 03:00 UTC</span>
             <Button
               variant="ghost"
               size="sm"
