@@ -36,7 +36,7 @@ export default function MiniTable({ columns, rows }) {
     if (col.key === "id") {
       return <span className="font-mono text-[11px] text-muted-foreground">{val}</span>;
     }
-    if (col.key === "name" && row.mondayUrl) {
+    if (col.key === "name" && row.mondayUrl && /^\d+$/.test(String(row.id))) {
       return (
         <a
           href={row.mondayUrl}
