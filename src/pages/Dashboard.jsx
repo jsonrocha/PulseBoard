@@ -42,7 +42,7 @@ export default function Dashboard() {
             <Clock className="h-3 w-3" />
           )}
           {lastSynced
-            ? `Last synced: ${format(lastSynced, "d MMM yyyy, HH:mm")} UTC`
+            ? `Last synced: ${format(lastSynced, "d MMM yyyy, h:mm a")} ${new Date().toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop()}`
             : isLoading ? 'Loading…' : 'Never synced — use Admin → Refresh'}
         </div>
       </div>
