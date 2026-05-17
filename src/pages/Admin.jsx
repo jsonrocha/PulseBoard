@@ -130,35 +130,38 @@ export default function Admin() {
             </div>
           </div>
         </div>
-        <div className="bg-card border border-border rounded-lg p-4 flex items-center justify-between">
-          <div>
-            <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Monday Sync</div>
-            <div className="text-[12px] text-muted-foreground mt-1">Trigger a full board refresh</div>
-            {snapshots.length > 0 && (() => {
-              const lastSynced = snapshots.reduce((latest, s) => {
-                if (!s.fetched_at) return latest;
-                const d = new Date(s.fetched_at);
-                return (!latest || d > latest) ? d : latest;
-              }, null);
-              // Compute local auto-sync time (03:00 UTC → local)
-              const autoSyncUtc = new Date();
-              autoSyncUtc.setUTCHours(3, 0, 0, 0);
-              const autoSyncLocal = autoSyncUtc.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' });
-              return (
-                <>
-                  {lastSynced && (
-                    <div className="text-[11px] text-muted-foreground font-mono mt-1">
-                      Last synced: {lastSynced.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}, {lastSynced.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' })}
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Monday Sync</div>
+              <div className="text-[12px] text-muted-foreground mt-1">Trigger a full board refresh</div>
+            </div>
+            <div className="text-right">
+              {snapshots.length > 0 && (() => {
+                const lastSynced = snapshots.reduce((latest, s) => {
+                  if (!s.fetched_at) return latest;
+                  const d = new Date(s.fetched_at);
+                  return (!latest || d > latest) ? d : latest;
+                }, null);
+                const autoSyncUtc = new Date();
+                autoSyncUtc.setUTCHours(3, 0, 0, 0);
+                const autoSyncLocal = autoSyncUtc.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' });
+                return (
+                  <>
+                    {lastSynced && (
+                      <div className="text-[11px] text-muted-foreground font-mono">
+                        Last synced: {lastSynced.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}, {lastSynced.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' })}
+                      </div>
+                    )}
+                    <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
+                      Auto-sync: daily @ {autoSyncLocal}
                     </div>
-                  )}
-                  <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
-                    Auto-sync: daily @ {autoSyncLocal}
-                  </div>
-                </>
-              );
-            })()}
+                  </>
+                );
+              })()}
+            </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap justify-end">
+          <div className="flex items-center gap-2 mt-3 justify-end">
             <Button
               variant="ghost"
               size="sm"
