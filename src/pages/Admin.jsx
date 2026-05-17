@@ -135,7 +135,8 @@ export default function Admin() {
             <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Monday Sync</div>
             <div className="text-[12px] text-muted-foreground mt-1">Trigger a full board refresh</div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap justify-end">
+            <span className="text-[11px] text-muted-foreground font-mono">Auto-sync: daily @ 03:00 UTC</span>
             <Button
               variant="ghost"
               size="sm"
