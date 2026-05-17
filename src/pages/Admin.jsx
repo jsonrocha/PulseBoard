@@ -167,7 +167,7 @@ export default function Admin() {
               size="sm"
               onClick={handleSeedClick}
               disabled={seeding}
-              className="gap-1.5 text-[12px] text-muted-foreground border border-border hover:text-foreground"
+              className="gap-1.5 text-[12px] text-foreground border border-border"
             >
               <FlaskConical className={`h-3.5 w-3.5 ${seeding ? "animate-pulse" : ""}`} />
               {seeding ? "Seeding…" : "Seed Test Data"}
