@@ -4,6 +4,9 @@ import KpiCard from "./KpiCard";
 import BoardSection from "./BoardSection";
 import MiniTable from "./MiniTable";
 import { parseSprint } from "@/lib/parseBoardData";
+import { mondayItemUrl } from "@/lib/mondayConfig";
+
+const BOARD_ID = '18413113346';
 
 const icons = [Zap, BarChart3, AlertOctagon];
 
@@ -90,7 +93,7 @@ export default function SprintSection({ snapshot }) {
               </ResponsiveContainer>
             </div>
           </div>
-          <MiniTable columns={sprintColumns} rows={parsed.tableRows} />
+          <MiniTable columns={sprintColumns} rows={parsed.tableRows.map(row => ({ ...row, mondayUrl: mondayItemUrl(BOARD_ID, row.id) }))} />
         </>
       ) : (
         <div className="grid grid-cols-2 gap-3"><EmptyState /></div>

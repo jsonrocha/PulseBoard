@@ -36,6 +36,18 @@ export default function MiniTable({ columns, rows }) {
     if (col.key === "id") {
       return <span className="font-mono text-[11px] text-muted-foreground">{val}</span>;
     }
+    if (col.key === "name" && row.mondayUrl) {
+      return (
+        <a
+          href={row.mondayUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[12px] transition-colors hover:text-primary hover:underline"
+        >
+          {val}
+        </a>
+      );
+    }
     return <span className="text-[12px]">{val}</span>;
   };
 

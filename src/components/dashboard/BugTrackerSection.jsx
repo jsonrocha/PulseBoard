@@ -4,6 +4,9 @@ import KpiCard from "./KpiCard";
 import BoardSection from "./BoardSection";
 import MiniTable from "./MiniTable";
 import { parseBugTracker } from "@/lib/parseBoardData";
+import { mondayItemUrl } from "@/lib/mondayConfig";
+
+const BOARD_ID = '18413113348';
 
 const icons = [Bug, AlertTriangle, CheckCircle];
 
@@ -101,7 +104,7 @@ export default function BugTrackerSection({ snapshot }) {
               </ResponsiveContainer>
             </div>
           </div>
-          <MiniTable columns={bugColumns} rows={parsed.tableRows} />
+          <MiniTable columns={bugColumns} rows={parsed.tableRows.map(row => ({ ...row, mondayUrl: mondayItemUrl(BOARD_ID, row.id) }))} />
         </>
       ) : (
         <div className="grid grid-cols-2 gap-3"><EmptyState /></div>

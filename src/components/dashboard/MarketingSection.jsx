@@ -4,6 +4,9 @@ import KpiCard from "./KpiCard";
 import BoardSection from "./BoardSection";
 import MiniTable from "./MiniTable";
 import { parseMarketing } from "@/lib/parseBoardData";
+import { mondayItemUrl } from "@/lib/mondayConfig";
+
+const BOARD_ID = '18413113347';
 
 const icons = [Megaphone, Radio, Calendar];
 
@@ -90,7 +93,7 @@ export default function MarketingSection({ snapshot }) {
               </ResponsiveContainer>
             </div>
           </div>
-          <MiniTable columns={mktColumns} rows={parsed.tableRows} />
+          <MiniTable columns={mktColumns} rows={parsed.tableRows.map(row => ({ ...row, mondayUrl: mondayItemUrl(BOARD_ID, row.id) }))} />
         </>
       ) : (
         <div className="grid grid-cols-2 gap-3"><EmptyState /></div>
