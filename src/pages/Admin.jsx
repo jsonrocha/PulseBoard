@@ -133,7 +133,7 @@ export default function Admin() {
         <div className="bg-card border border-border rounded-lg p-4">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Monday Sync</div>
+              <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Monday.com Sync</div>
               <div className="text-[12px] text-muted-foreground mt-1">Trigger a full board refresh</div>
             </div>
             <div className="text-right">
