@@ -107,7 +107,7 @@ export default function Admin() {
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-[1fr_1fr_2fr] gap-3">
         <div className="bg-card border border-border rounded-lg p-4 flex items-center gap-4">
           <div className="h-9 w-9 rounded-md bg-primary/10 flex items-center justify-center">
             <Database className="h-4 w-4 text-primary" />
