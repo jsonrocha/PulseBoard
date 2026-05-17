@@ -134,6 +134,18 @@ export default function Admin() {
           <div>
             <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Monday Sync</div>
             <div className="text-[12px] text-muted-foreground mt-1">Trigger a full board refresh</div>
+            {snapshots.length > 0 && (() => {
+              const lastSynced = snapshots.reduce((latest, s) => {
+                if (!s.fetched_at) return latest;
+                const d = new Date(s.fetched_at);
+                return (!latest || d > latest) ? d : latest;
+              }, null);
+              return lastSynced ? (
+                <div className="text-[11px] text-muted-foreground font-mono mt-1">
+                  Last synced: {lastSynced.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}, {lastSynced.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).replace(',', '')}
+                </div>
+              ) : null;
+            })()}
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end">
             <span className="text-[11px] text-muted-foreground font-mono">Auto-sync: daily @ 03:00 UTC</span>
