@@ -74,7 +74,7 @@ export default function BugTrackerSection({ snapshot }) {
               <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Bugs by Severity</div>
               <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
-                  <Pie data={parsed.severityChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
+                  <Pie data={parsed.severityChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none" style={{ cursor: 'pointer' }}>
                     {parsed.severityChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   </Pie>
                   <Tooltip content={<CustomTooltip />} cursor={false} />

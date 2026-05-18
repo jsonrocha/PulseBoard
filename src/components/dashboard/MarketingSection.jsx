@@ -63,7 +63,7 @@ export default function MarketingSection({ snapshot }) {
               <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">Campaigns by Status</div>
               <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
-                  <Pie data={parsed.statusChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none">
+                  <Pie data={parsed.statusChart} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} stroke="none" style={{ cursor: 'pointer' }}>
                     {parsed.statusChart.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   </Pie>
                   <Tooltip content={<CustomTooltip />} cursor={false} />
