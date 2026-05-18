@@ -3,7 +3,9 @@
 A unified dashboard of Monday.com boards for engineering, marketing, and ops leads with a natural-language assistant accessible both in-app and via WhatsApp.
  
 **Live app:** https://my-pulseboard.base44.app
+
 **Test version:** https://share--my-pulseboard.base44.app
+
 **Built on:** [Base44](https://base44.com)
  
 ---
@@ -62,7 +64,7 @@ The in-app chat agent uses `queryMonday`, a backend function that proxies GraphQ
 - **Data:** Base44 entities (MongoDB-compatible NoSQL)
 - **AI:** InvokeLLM (Claude Sonnet 4) for in-app chat; Base44 Superagent for WhatsApp
 - **Auth:** Okta OIDC SSO + email/password
-- **Integrations:** Monday.com REST/GraphQL API
+- **Integrations:** Monday.com GraphQL API
 - **Source control:** GitHub two-way sync
 ---
  
