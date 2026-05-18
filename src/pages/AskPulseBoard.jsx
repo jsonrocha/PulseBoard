@@ -106,7 +106,7 @@ Keep responses under 4 sentences unless the user explicitly asks for detail.`;
             </div>
             <p className="text-sm font-medium text-foreground">Ask anything about your boards</p>
             <p className="text-[12px] text-muted-foreground mt-1 max-w-sm">
-              "How many critical bugs are open?" · "What's the sprint velocity trend?" · "Which campaign has the best CAC?"
+              "How many critical bugs are open?" · "What's the sprint velocity trend?""
             </p>
           </div>
         )}
