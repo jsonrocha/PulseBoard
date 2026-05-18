@@ -1,4 +1,6 @@
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const statusColors = {
   "Open": "bg-yellow-500/15 text-yellow-400",
@@ -20,7 +22,45 @@ const severityColors = {
   "Trivial": "text-muted-foreground",
 };
 
+// Numeric columns — sort numerically, others alphabetically
+const numericKeys = new Set(["id", "updated"]);
+
+function compareValues(a, b, key) {
+  const aVal = a[key] ?? "";
+  const bVal = b[key] ?? "";
+  if (numericKeys.has(key)) {
+    const aNum = Number(aVal);
+    const bNum = Number(bVal);
+    if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+    // Fall back to date comparison for "updated"
+    const aDate = new Date(aVal);
+    const bDate = new Date(bVal);
+    if (!isNaN(aDate) && !isNaN(bDate)) return aDate - bDate;
+  }
+  return String(aVal).localeCompare(String(bVal));
+}
+
 export default function MiniTable({ columns, rows }) {
+  const [sortKey, setSortKey] = useState(null);
+  const [sortDir, setSortDir] = useState("asc");
+
+  const handleSort = (key) => {
+    if (sortKey === key) {
+      setSortDir(d => d === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const sortedRows = useMemo(() => {
+    if (!sortKey) return rows;
+    return [...rows].sort((a, b) => {
+      const cmp = compareValues(a, b, sortKey);
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [rows, sortKey, sortDir]);
+
   const renderCell = (col, row) => {
     const val = row[col.key];
     if (col.key === "status") {
@@ -51,6 +91,13 @@ export default function MiniTable({ columns, rows }) {
     return <span className="text-[12px]">{val}</span>;
   };
 
+  const SortIcon = ({ colKey }) => {
+    if (sortKey !== colKey) return <ChevronsUpDown className="h-3 w-3 opacity-30" />;
+    return sortDir === "asc"
+      ? <ChevronUp className="h-3 w-3 text-primary" />
+      : <ChevronDown className="h-3 w-3 text-primary" />;
+  };
+
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-y-auto max-h-[480px]">
@@ -58,14 +105,21 @@ export default function MiniTable({ columns, rows }) {
           <thead className="sticky top-0 bg-card z-10">
             <tr className="border-b border-border">
               {columns.map(col => (
-                <th key={col.key} className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                  {col.label}
+                <th
+                  key={col.key}
+                  className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer select-none hover:text-foreground transition-colors"
+                  onClick={() => handleSort(col.key)}
+                >
+                  <span className="flex items-center gap-1">
+                    {col.label}
+                    <SortIcon colKey={col.key} />
+                  </span>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, i) => (
+            {sortedRows.map((row, i) => (
               <tr key={i} className="border-b border-border/50 last:border-0 hover:bg-secondary/30 transition-colors">
                 {columns.map(col => (
                   <td key={col.key} className="px-3 py-2">
