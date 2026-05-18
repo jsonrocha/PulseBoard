@@ -95,7 +95,6 @@ Keep responses under 4 sentences unless the user explicitly asks for detail.`;
       {/* Header */}
       <div className="px-6 h-14 flex items-center border-b border-border flex-shrink-0">
         <h1 className="text-sm font-semibold text-foreground tracking-tight">Ask PulseBoard</h1>
-        <span className="ml-2 text-[11px] font-mono text-muted-foreground">natural-language queries across boards</span>
       </div>
 
       {/* Messages */}
@@ -119,11 +118,10 @@ Keep responses under 4 sentences unless the user explicitly asks for detail.`;
                 <Activity className="h-3.5 w-3.5 text-primary" />
               </div>
             )}
-            <div className={`max-w-[70%] rounded-lg px-4 py-3 text-[13px] leading-relaxed ${
-              msg.role === "user"
-                ? "bg-primary text-primary-foreground"
-                : "bg-card border border-border text-foreground"
-            }`}>
+            <div className={`max-w-[70%] rounded-lg px-4 py-3 text-[13px] leading-relaxed ${msg.role === "user"
+              ? "bg-primary text-primary-foreground"
+              : "bg-card border border-border text-foreground"
+              }`}>
               {msg.role === "assistant" ? (
                 <ReactMarkdown className="prose prose-sm prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_strong]:text-foreground [&_p]:my-1">
                   {msg.content}

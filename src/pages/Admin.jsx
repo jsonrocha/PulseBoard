@@ -154,7 +154,7 @@ export default function Admin() {
                       </div>
                     )}
                     <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
-                      Auto-sync: daily @ {autoSyncLocal}
+                      Auto-sync: Daily @ {autoSyncLocal}
                     </div>
                   </>
                 );
