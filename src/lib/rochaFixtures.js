@@ -88,7 +88,7 @@ const sprintItems = [
 const marketingItems = [
   makeItem("rocha-mkt-1", "Annual user conference", "2026-05-15T08:00:00Z", [
     col("multiple_person_mm3bkdw7", "Owner", "Alex Rocha"),
-    col("color_mm3bg2k7", "Status", "Active"),
+    col("color_mm3bg2k7", "Status", "Live"),
     col("dropdown_mm3bt5m9", "Channel", "Events"),
     col("numeric_mm3bwfvn", "Budget", "75000"),
     col("date_mm3b85pa", "Launch Date", "2026-09-01"),
