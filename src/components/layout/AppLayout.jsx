@@ -5,7 +5,6 @@ import { base44 } from "@/api/base44Client";
 
 const isTestEnvGlobal = (() => {
   try {
-    // Base44 testing link passes data_env=dev as a query param
     if (window.location.href.includes("share")) return true;
     // Also check localStorage fallback
     const keys = ["base44_data_env", "data_env"];
