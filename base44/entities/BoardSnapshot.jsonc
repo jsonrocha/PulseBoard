@@ -34,11 +34,6 @@
         "role": "admin"
       }
     },
-    "read": {
-      "user_condition": {
-        "role": "user"
-      }
-    },
     "update": {
       "user_condition": {
         "role": "admin"
