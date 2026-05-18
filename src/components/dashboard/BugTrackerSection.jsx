@@ -50,7 +50,7 @@ export default function BugTrackerSection({ snapshot }) {
   const parsed = items ? parseBugTracker(items) : null;
 
   return (
-    <BoardSection title="Bug Tracker" subtitle={`board_id: 18413113348${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
+    <BoardSection title="Bug Tracker" subtitle={`${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
       <style>{`
   .recharts-bar-hover {
     transition: transform 150ms ease, filter 150ms ease;
