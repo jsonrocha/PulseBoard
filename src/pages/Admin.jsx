@@ -42,8 +42,8 @@ export default function Admin() {
 
   const isAdmin = user?.role === "admin";
 
-if (!user) return null;          // or a tiny <Loading /> spinner
-if (!isAdmin) {
+  if (!user) return null;          // or a tiny <Loading /> spinner
+  if (!isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
@@ -134,7 +134,7 @@ if (!isAdmin) {
         <div className="bg-card border border-border rounded-lg p-4">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Monday.com Sync</div>
+              <div className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">monday.com Sync</div>
               <div className="text-[12px] text-muted-foreground mt-1">Trigger a full board refresh</div>
             </div>
             <div className="text-right">

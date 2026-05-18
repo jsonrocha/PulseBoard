@@ -1,6 +1,6 @@
 # PulseBoard
  
-A unified dashboard of Monday.com boards for engineering, marketing, and ops leads with a natural-language assistant accessible both in-app and via WhatsApp.
+A unified dashboard of monday.com boards for engineering, marketing, and ops leads with a natural-language assistant accessible both in-app and via WhatsApp.
  
 **Live app:** https://my-pulseboard.base44.app
 
@@ -12,7 +12,7 @@ A unified dashboard of Monday.com boards for engineering, marketing, and ops lea
  
 ## What it does
  
-PulseBoard aggregates real-time data from three Monday.com boards — Bug Tracker, Engineering Sprint, and Marketing Campaigns — into a single dashboard with KPI cards, charts, and item tables. An AI assistant grounds answers in the cached board data, answering questions like "how many critical bugs are open?" or "what items is John Smith working on?" The same assistant is also accessible through WhatsApp, so on-call leads can check status from their phone without opening a laptop.
+PulseBoard aggregates real-time data from three monday.com boards — Bug Tracker, Engineering Sprint, and Marketing Campaigns — into a single dashboard with KPI cards, charts, and item tables. An AI assistant grounds answers in the cached board data, answering questions like "how many critical bugs are open?" or "what items is John Smith working on?" The same assistant is also accessible through WhatsApp, so on-call leads can check status from their phone without opening a laptop.
  
 ---
  
@@ -21,7 +21,7 @@ PulseBoard aggregates real-time data from three Monday.com boards — Bug Tracke
 ### Data flow
  
 ```
-Monday.com ←─── queryMonday (backend fn) ←─── In-app chat
+monday.com ←─── queryMonday (backend fn) ←─── In-app chat
             ←─── syncMondayBoards (direct) ←─── Dashboard cache (BoardSnapshot)
                                                 ↑
                                             Daily Automation @ 03:00 UTC
@@ -29,7 +29,7 @@ Monday.com ←─── queryMonday (backend fn) ←─── In-app chat
                                             Admin "Refresh" (on-demand)
 ```
  
-The dashboard reads from a `BoardSnapshot` entity that acts as a cache, never hitting Monday.com on page load. The cache is refreshed two ways:
+The dashboard reads from a `BoardSnapshot` entity that acts as a cache, never hitting monday.com on page load. The cache is refreshed two ways:
 - **Manual:** Admin clicks "Refresh" in the Admin panel → `syncMondayBoards` runs
 - **Scheduled:** Base44 Automation fires daily at 03:00 UTC → same function runs
 The in-app chat agent uses `queryMonday`, a backend function that proxies GraphQL queries with an auth gate, for on-demand context fetching.
@@ -44,11 +44,11 @@ The in-app chat agent uses `queryMonday`, a backend function that proxies GraphQ
  
 ### Why these patterns
  
-**Backend functions over OpenAPI workspace integrations for Monday.** Monday's API is GraphQL-native, and OpenAPI maps awkwardly to GraphQL. Backend functions give full control over the request structure.
+**Backend functions over OpenAPI workspace integrations for monday.** monday's API is GraphQL-native, and OpenAPI maps awkwardly to GraphQL. Backend functions give full control over the request structure.
  
 **Two AI agent patterns side-by-side.** The in-app chat is a *workflow* agent: pre-fetched context, single LLM call, deterministic answer. The WhatsApp-connected Superagent is an *autonomous* agent: it calls tools, reasons, and chains queries. Different products for different contexts — interactive web vs. async mobile.
  
-**Cache-and-refresh, not live polling.** Hitting Monday on every page load would burn API credits and rate-limit risk. The cache makes the dashboard fast and the integration credit-conservative. The daily automation keeps it fresh without over-polling.
+**Cache-and-refresh, not live polling.** Hitting monday on every page load would burn API credits and rate-limit risk. The cache makes the dashboard fast and the integration credit-conservative. The daily automation keeps it fresh without over-polling.
  
 **SSO and authorization deliberately separated.** Okta handles authentication; Base44 user-role layer handles authorization. New SSO users are provisioned with a default `user` role; admin elevation is a deliberate, manual step in the user management UI. An Okta directory admin can grant *access* but not silently grant *admin*.
  
@@ -64,7 +64,7 @@ The in-app chat agent uses `queryMonday`, a backend function that proxies GraphQ
 - **Data:** Base44 entities (MongoDB-compatible NoSQL)
 - **AI:** InvokeLLM (Claude Sonnet 4) for in-app chat; Base44 Superagent for WhatsApp
 - **Auth:** Okta OIDC SSO + email/password
-- **Integrations:** Monday.com GraphQL API
+- **Integrations:** monday.com GraphQL API
 - **Source control:** GitHub two-way sync
 ---
  

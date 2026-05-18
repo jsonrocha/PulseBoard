@@ -33,7 +33,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-bold tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-[12px] text-muted-foreground mt-0.5">Aggregated view across Monday.com boards</p>
+          <p className="text-[12px] text-muted-foreground mt-0.5">Aggregated view across monday.com boards</p>
         </div>
         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
           {isLoading ? (

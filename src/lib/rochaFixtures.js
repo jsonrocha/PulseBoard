@@ -1,5 +1,5 @@
 // Fictional "Rocha LLC" test dataset — used exclusively in test/dev environment.
-// Column IDs match production Monday.com board conventions so existing dashboard
+// Column IDs match production monday.com board conventions so existing dashboard
 // parsers (parseBoardData.js) render them without any changes.
 
 const now = new Date().toISOString();

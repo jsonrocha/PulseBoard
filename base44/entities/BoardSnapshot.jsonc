@@ -4,7 +4,7 @@
   "properties": {
     "board_id": {
       "type": "string",
-      "description": "Monday.com board ID"
+      "description": "monday.com board ID"
     },
     "board_name": {
       "type": "string",
@@ -21,7 +21,7 @@
     },
     "raw_items_json": {
       "type": "string",
-      "description": "Full Monday items_page JSON response"
+      "description": "Full monday items_page JSON response"
     }
   },
   "required": [
