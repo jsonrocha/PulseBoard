@@ -1,23 +1,23 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import UserMenu from "./UserMenu";
+import { base44 } from "@/api/base44Client";
 
-function detectTestEnv() {
+const isTestEnvGlobal = (() => {
   try {
-    const url = new URLSearchParams(window.location.search);
-    if (url.get("data_env") === "dev") return true;
-    // Check all known localStorage keys Base44 might use
-    const keys = ["base44_data_env", "data_env", "base44_test_mode"];
+    // Base44 testing link passes data_env=dev as a query param
+    if (window.location.href.includes("data_env=dev")) return true;
+    // Also check localStorage fallback
+    const keys = ["base44_data_env", "data_env"];
     for (const key of keys) {
-      const val = localStorage.getItem(key);
-      if (val === "dev" || val === "true") return true;
+      if (localStorage.getItem(key) === "dev") return true;
     }
     return false;
   } catch { return false; }
-}
+})();
 
 export default function AppLayout() {
-  const isTestEnv = detectTestEnv();
+  const isTestEnv = isTestEnvGlobal;
 
   return (
     <div className="flex min-h-screen bg-background font-sans">
