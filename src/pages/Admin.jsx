@@ -42,7 +42,8 @@ export default function Admin() {
 
   const isAdmin = user?.role === "admin";
 
-  if (!isAdmin && user) {
+if (!user) return null;          // or a tiny <Loading /> spinner
+if (!isAdmin) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
