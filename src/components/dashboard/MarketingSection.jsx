@@ -50,7 +50,7 @@ export default function MarketingSection({ snapshot }) {
   const parsed = items ? parseMarketing(items) : null;
 
   return (
-    <BoardSection title="Marketing Campaigns" subtitle={`board_id: 18413113347${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
+    <BoardSection title="Marketing Campaigns" subtitle={`${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
       {parsed ? (
         <>
           <div className="grid grid-cols-3 gap-3">
