@@ -50,7 +50,7 @@ export default function SprintSection({ snapshot }) {
   const parsed = items ? parseSprint(items) : null;
 
   return (
-    <BoardSection title="Engineering Sprint" subtitle={`board_id: 18413113346${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
+    <BoardSection title="Engineering Sprint" subtitle={`Board Id: 18413113346${snapshot ? ` · ${items?.length ?? 0} items` : ''}`}>
       {parsed ? (
         <>
           <div className="grid grid-cols-3 gap-3">
