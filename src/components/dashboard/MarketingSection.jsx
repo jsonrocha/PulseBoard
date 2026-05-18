@@ -24,11 +24,14 @@ const CustomTooltip = ({ active, payload, label }) => {
   return (
     <div className="bg-card border border-border rounded-md px-3 py-2 text-[11px] shadow-lg">
       <p className="font-medium text-foreground mb-1">{label}</p>
-      {payload.map((p, i) => (
-        <p key={i} className="text-muted-foreground">
-          <span style={{ color: p.color }}>●</span> {p.name}: {p.value}
-        </p>
-      ))}
+      {payload.map((p, i) => {
+        const dotColor = p.color || p.fill || p.payload?.fill || 'currentColor';
+        return (
+          <p key={i} className="text-muted-foreground">
+            <span style={{ color: dotColor }}>●</span> {p.name}: {p.value}
+          </p>
+        );
+      })}
     </div>
   );
 };
