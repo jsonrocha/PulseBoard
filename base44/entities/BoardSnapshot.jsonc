@@ -35,18 +35,9 @@
       }
     },
     "read": {
-      "$or": [
-        {
-          "user_condition": {
-            "role": "user"
-          }
-        },
-        {
-          "user_condition": {
-            "role": "viewer"
-          }
-        }
-      ]
+      "user_condition": {
+        "role": "user"
+      }
     },
     "update": {
       "user_condition": {
