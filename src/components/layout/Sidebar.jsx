@@ -29,25 +29,6 @@ export default function Sidebar({ collapsed, onToggle }) {
 
       {/* Nav + collapse toggle row */}
       <nav className="flex-1 px-2 py-3 space-y-0.5">
-        {/* Collapse toggle — sits above nav items, aligned with them */}
-        <button
-          onClick={onToggle}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className={cn(
-            "w-full flex items-center rounded-md text-[13px] font-medium transition-colors mb-2",
-            collapsed ? "justify-center px-0 py-2" : "gap-2.5 px-3 py-2",
-            "text-muted-foreground hover:text-foreground hover:bg-secondary/50 border border-border"
-          )}
-        >
-          {collapsed
-            ? <ChevronRight className="h-4 w-4 flex-shrink-0" />
-            : <>
-                <ChevronLeft className="h-4 w-4 flex-shrink-0" />
-                <span>Collapse</span>
-              </>
-          }
-        </button>
-
         {navItems.map(({ path, label, icon: Icon }) => {
           const active = location.pathname === path;
           return (
@@ -70,9 +51,23 @@ export default function Sidebar({ collapsed, onToggle }) {
         })}
       </nav>
 
-      {/* Footer */}
-      <div className={cn("py-3 border-t border-border flex items-center", collapsed ? "justify-center px-0" : "px-4")}>
-        {!collapsed && <div className="text-[11px] text-muted-foreground font-mono">v0.1.0</div>}
+      {/* Footer — collapse toggle + version */}
+      <div className={cn("px-2 py-3 border-t border-border space-y-0.5")}>
+        <button
+          onClick={onToggle}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className={cn(
+            "w-full flex items-center rounded-md text-[13px] font-medium transition-colors",
+            collapsed ? "justify-center px-0 py-2" : "gap-2.5 px-3 py-2",
+            "text-muted-foreground hover:text-foreground hover:bg-secondary/50 border border-border"
+          )}
+        >
+          {collapsed
+            ? <ChevronRight className="h-4 w-4 flex-shrink-0" />
+            : <><ChevronLeft className="h-4 w-4 flex-shrink-0" /><span>Collapse</span></>
+          }
+        </button>
+        {!collapsed && <div className="text-[11px] text-muted-foreground font-mono px-3 pt-1">v0.1.0</div>}
       </div>
     </aside>
   );
