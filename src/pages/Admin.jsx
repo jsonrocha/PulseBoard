@@ -23,7 +23,7 @@ const isTestEnv = (() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("base44_data_env") === "dev") return true;
     if (params.get("data_env") === "dev") return true;
-    if (window.location.href.includes("share")) return true;
+    if (localStorage.getItem("base44_data_env") === "dev") return true;
     return false;
   } catch { return false; }
 })();

@@ -7,10 +7,9 @@ import { base44 } from "@/api/base44Client";
 const isTestEnvGlobal = (() => {
   try {
     const params = new URLSearchParams(window.location.search);
-    // Base44 preview UI uses base44_data_env=dev, share links use "share" in URL
     if (params.get("base44_data_env") === "dev") return true;
     if (params.get("data_env") === "dev") return true;
-    if (window.location.href.includes("share")) return true;
+    if (localStorage.getItem("base44_data_env") === "dev") return true;
     return false;
   } catch { return false; }
 })();

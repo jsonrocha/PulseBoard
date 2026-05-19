@@ -17,6 +17,7 @@ const dataEnv = (() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("base44_data_env") === "dev") return "dev";
     if (params.get("data_env") === "dev") return "dev";
+    if (localStorage.getItem("base44_data_env") === "dev") return "dev";
     return "prod";
   } catch { return "prod"; }
 })();
