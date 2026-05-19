@@ -18,6 +18,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+const isTestEnv = (() => {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("base44_data_env") === "dev") return true;
+    if (params.get("data_env") === "dev") return true;
+    if (window.location.href.includes("share")) return true;
+    return false;
+  } catch { return false; }
+})();
+
 export default function Admin() {
   const [user, setUser] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -177,7 +187,8 @@ export default function Admin() {
               variant="outline"
               size="sm"
               onClick={handleRefresh}
-              disabled={refreshing}
+              disabled={refreshing || isTestEnv}
+              title={isTestEnv ? "Sync is disabled in Test Mode" : undefined}
               className="gap-1.5 text-[12px]"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
