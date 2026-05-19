@@ -12,7 +12,7 @@ A unified dashboard of monday.com boards for engineering, marketing, and ops lea
  
 ## What it does
  
-PulseBoard aggregates real-time data from three monday.com boards — Bug Tracker, Engineering Sprint, and Marketing Campaigns — into a single dashboard with KPI cards, charts, and item tables. An AI assistant grounds answers in the cached board data, answering questions like "how many critical bugs are open?" or "what items is John Smith working on?" The same assistant is also accessible through WhatsApp, so on-call leads can check status from their phone without opening a laptop.
+PulseBoard aggregates real-time data from three monday.com boards — Bug Tracker, Engineering Sprint, and Marketing Campaigns — into a single dashboard with KPI cards, charts, and item tables. An AI assistant grounds answers in the cached board data, answering questions like "how many critical bugs are open?" or "what items is John Smith working on?" A true autonomous agent is also accessible through WhatsApp, so on-call leads can check statuses from their phone without opening a laptop.
  
 ---
  
