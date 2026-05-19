@@ -12,7 +12,7 @@ const BOARD_IDS = {
   marketing: '18413113347',
 };
 
-const dataEnv = (() => {
+function getDataEnv() {
   try {
     const params = new URLSearchParams(window.location.search);
     if (params.get("base44_data_env") === "dev") return "dev";
@@ -20,13 +20,16 @@ const dataEnv = (() => {
     if (localStorage.getItem("base44_data_env") === "dev") return "dev";
     return "prod";
   } catch { return "prod"; }
-})();
+}
 
 export default function Dashboard() {
+  const dataEnv = getDataEnv();
   const { data: snapshots = [], isLoading } = useQuery({
     queryKey: ['board-snapshots', dataEnv],
     queryFn: () => base44.entities.BoardSnapshot.list('-fetched_at', 20),
     refetchInterval: 60_000,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   const byBoard = {};
