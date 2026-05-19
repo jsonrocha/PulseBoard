@@ -82,7 +82,7 @@ export default function Admin() {
       );
 
       await queryClient.invalidateQueries({ queryKey: ['admin-snapshots'] });
-      await queryClient.invalidateQueries({ queryKey: ['board-snapshots'] });
+      await queryClient.invalidateQueries({ queryKey: ['board-snapshots', isTestEnv ? 'dev' : 'prod'] });
       toast.success("Rocha LLC test data seeded successfully.");
     } catch (err) {
       toast.error(`Seed failed: ${err.message}`);
@@ -97,7 +97,7 @@ export default function Admin() {
       const res = await base44.functions.invoke('syncMondayBoards', {});
       const { synced = [], errors = [] } = res.data;
       await queryClient.invalidateQueries({ queryKey: ['admin-snapshots'] });
-      await queryClient.invalidateQueries({ queryKey: ['board-snapshots'] });
+      await queryClient.invalidateQueries({ queryKey: ['board-snapshots', isTestEnv ? 'dev' : 'prod'] });
       if (errors.length > 0) {
         toast.warning(`Synced ${synced.length} board(s). ${errors.length} failed: ${errors.map(e => e.board_id).join(', ')}`);
       } else {
