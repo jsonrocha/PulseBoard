@@ -178,7 +178,8 @@ export default function Admin() {
               variant="ghost"
               size="sm"
               onClick={handleSeedClick}
-              disabled={seeding}
+              disabled={seeding || !isTestEnv}
+              title={!isTestEnv ? "Seed is only available in Test mode" : undefined}
               className="gap-1.5 text-[12px] text-foreground border border-border"
             >
               <FlaskConical className={`h-3.5 w-3.5 ${seeding ? "animate-pulse" : ""}`} />
