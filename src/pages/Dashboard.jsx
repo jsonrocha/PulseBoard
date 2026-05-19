@@ -28,8 +28,6 @@ export default function Dashboard() {
     queryKey: ['board-snapshots', dataEnv],
     queryFn: () => base44.entities.BoardSnapshot.list('-fetched_at', 20),
     refetchInterval: 60_000,
-    staleTime: 0,
-    gcTime: 0,
   });
 
   const byBoard = {};
