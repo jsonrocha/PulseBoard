@@ -49,25 +49,22 @@ export default function Sidebar({ collapsed, onToggle }) {
             </Link>
           );
         })}
+
+        {/* Collapse toggle — subtle, flush right, just below nav items */}
+        <div className={cn("pt-1 flex", collapsed ? "justify-center" : "justify-end pr-1")}>
+          <button
+            onClick={onToggle}
+            className="h-6 w-6 flex items-center justify-center rounded text-muted-foreground/50 hover:text-muted-foreground hover:bg-secondary/50 transition-colors"
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
+          </button>
+        </div>
       </nav>
 
-      {/* Footer — collapse toggle + version */}
-      <div className={cn("px-2 py-3 border-t border-border space-y-0.5")}>
-        <button
-          onClick={onToggle}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className={cn(
-            "w-full flex items-center rounded-md text-[13px] font-medium transition-colors",
-            collapsed ? "justify-center px-0 py-2" : "gap-2.5 px-3 py-2",
-            "text-muted-foreground hover:text-foreground hover:bg-secondary/50 border border-border"
-          )}
-        >
-          {collapsed
-            ? <ChevronRight className="h-4 w-4 flex-shrink-0" />
-            : <><ChevronLeft className="h-4 w-4 flex-shrink-0" /><span>Collapse</span></>
-          }
-        </button>
-        {!collapsed && <div className="text-[11px] text-muted-foreground font-mono px-3 pt-1">v0.1.0</div>}
+      {/* Footer */}
+      <div className="py-3 border-t border-border px-4">
+        {!collapsed && <div className="text-[11px] text-muted-foreground font-mono">v0.1.0</div>}
       </div>
     </aside>
   );
