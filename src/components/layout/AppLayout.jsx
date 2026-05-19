@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import UserMenu from "./UserMenu";
@@ -16,10 +17,11 @@ const isTestEnvGlobal = (() => {
 
 export default function AppLayout() {
   const isTestEnv = isTestEnvGlobal;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-background font-sans">
-      <Sidebar />
+      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />
       <div className="flex-1 min-w-0 flex flex-col">
         <header className="h-14 flex items-center justify-end px-5 border-b border-border bg-background sticky top-0 z-20">
           {isTestEnv && (
