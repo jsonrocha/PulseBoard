@@ -19,16 +19,35 @@ export default function Sidebar({ collapsed, onToggle }) {
         collapsed ? "w-14" : "w-56"
       )}
     >
-      {/* Header — always shows logo; title only when expanded */}
-      <div className="px-3 h-14 flex items-center gap-2.5 flex-shrink-0">
+      {/* Header — always shows logo + title */}
+      <div className="px-3 h-14 flex items-center gap-2.5 flex-shrink-0 border-b border-border overflow-hidden">
         <PulseLogo size={28} className="flex-shrink-0" />
         {!collapsed && (
           <span className="font-semibold text-sm tracking-tight text-foreground truncate">PulseBoard</span>
         )}
       </div>
 
-      {/* Nav */}
+      {/* Nav + collapse toggle row */}
       <nav className="flex-1 px-2 py-3 space-y-0.5">
+        {/* Collapse toggle — sits above nav items, aligned with them */}
+        <button
+          onClick={onToggle}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className={cn(
+            "w-full flex items-center rounded-md text-[13px] font-medium transition-colors mb-2",
+            collapsed ? "justify-center px-0 py-2" : "gap-2.5 px-3 py-2",
+            "text-muted-foreground hover:text-foreground hover:bg-secondary/50 border border-border"
+          )}
+        >
+          {collapsed
+            ? <ChevronRight className="h-4 w-4 flex-shrink-0" />
+            : <>
+                <ChevronLeft className="h-4 w-4 flex-shrink-0" />
+                <span>Collapse</span>
+              </>
+          }
+        </button>
+
         {navItems.map(({ path, label, icon: Icon }) => {
           const active = location.pathname === path;
           return (
@@ -52,15 +71,8 @@ export default function Sidebar({ collapsed, onToggle }) {
       </nav>
 
       {/* Footer */}
-      <div className={cn("py-3 border-t border-border flex items-center", collapsed ? "justify-center px-0" : "px-4 justify-between")}>
+      <div className={cn("py-3 border-t border-border flex items-center", collapsed ? "justify-center px-0" : "px-4")}>
         {!collapsed && <div className="text-[11px] text-muted-foreground font-mono">v0.1.0</div>}
-        <button
-          onClick={onToggle}
-          className="h-6 w-6 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
-        </button>
       </div>
     </aside>
   );
