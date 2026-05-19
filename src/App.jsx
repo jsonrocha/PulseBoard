@@ -1,6 +1,5 @@
 import { Toaster } from "@/components/ui/toaster"
-import { QueryClientProvider, useQueryClient } from '@tanstack/react-query'
-import { useRef, useEffect } from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
@@ -13,19 +12,6 @@ import Admin from '@/pages/Admin';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
-  const queryClient = useQueryClient();
-
-  // When Base44 preview switches environments (prod↔dev), the URL param changes
-  // but the JS context stays alive. Clear the entire query cache on env change
-  // so stale data from the previous environment is never served.
-  const currentEnv = new URLSearchParams(window.location.search).get("base44_data_env") || "prod";
-  const envRef = useRef(currentEnv);
-  useEffect(() => {
-    if (envRef.current !== currentEnv) {
-      envRef.current = currentEnv;
-      queryClient.clear();
-    }
-  }, [currentEnv, queryClient]);
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
