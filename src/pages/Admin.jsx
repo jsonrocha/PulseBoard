@@ -21,6 +21,7 @@ import {
 const isTestEnv = (() => {
   try {
     const params = new URLSearchParams(window.location.search);
+    if (window.location.hostname.includes("share")) return true;
     if (params.get("base44_data_env") === "dev") return true;
     if (params.get("data_env") === "dev") return true;
     if (localStorage.getItem("base44_data_env") === "dev") return true;
